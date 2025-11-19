@@ -5,24 +5,24 @@ def hitung_imt(berat_kg, tinggi_m):
     return berat_kg / (tinggi_m ** 2)
 
 st.title("Aplikasi Penghitung Indeks Massa Tubuh (IMT)")
-st.write("Masukkan berat dan tinggi badan Anda untuk menghitung IMT.")
+st.write("Masukkan berat dan tinggi badan untuk menghitung IMT dan kategorinya.")
 
-# Input berat dan tinggi
+# Input pengguna
 berat = st.number_input("Masukkan berat badan (kg):", min_value=1.0, step=0.1)
 tinggi = st.number_input("Masukkan tinggi badan (meter):", min_value=0.3, step=0.01)
 
 if st.button("Hitung IMT"):
     imt = hitung_imt(berat, tinggi)
-    st.write(f"### Nilai IMT Anda: **{imt:.2f}**")
 
-    # Kategori IMT
+    st.subheader("Hasil Perhitungan IMT")
+    st.write(f"Nilai IMT Anda adalah: **{imt:.2f}**")
+
+    # Menentukan kategori IMT
     if imt < 18.5:
-        kategori = "Kurus / Kekurangan berat badan"
-        st.warning(kategori)
+        st.warning("Kategori: Kurus / Kekurangan berat badan")
     elif 18.5 <= imt < 25.0:
-        kategori = "Normal / Ideal"
-        st.success(kategori)
+        st.success("Kategori: Normal / Ideal")
     elif 25.0 <= imt < 30.0:
-        kategori = "Kelebihan berat badan"
-        st.info(kategori)
+        st.info("Kategori: Kelebihan berat badan")
     else:
+        st.error("Kategori: Obesitas")
