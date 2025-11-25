@@ -149,4 +149,61 @@ with col_summary:
     st.markdown(f"## **Rp {subtotal_semua:,.0f}**")
     
     # Input Diskon
-    diskon_persen = st.slider("Diskon (%)
+    diskon_persen = st.slider("Diskon (%)", min_value=0, max_value=50, value=0, key='diskon_persen')
+    diskon_amount = subtotal_semua * (diskon_persen / 100)
+    
+    total_bersih = subtotal_semua - diskon_amount
+    
+    st.markdown(f"Diskon: **Rp {diskon_amount:,.0f}** ({diskon_persen}%)")
+    st.markdown(f"## Total Tagihan Bersih: **Rp {total_bersih:,.0f}**", unsafe_allow_html=True)
+    
+with col_action:
+    st.markdown("### Aksi Transaksi")
+    
+    # Input Pembayaran
+    pembayaran = st.number_input(
+        "Jumlah Uang Dibayar Pelanggan (Rp)", 
+        min_value=total_bersih, 
+        value=total_bersih if total_bersih > 0 else 0.0, 
+        step=1000.0
+    )
+    
+    kembalian = pembayaran - total_bersih
+    st.markdown(f"Uang Kembalian: **Rp {kembalian:,.0f}**", unsafe_allow_html=True)
+
+    # Tombol Selesaikan Transaksi
+    if st.session_state.cart and pembayaran >= total_bersih:
+        if st.button("Selesaikan Transaksi & Cetak Struk 🖨️", key="complete_btn"):
+            # Lakukan pencatatan riwayat
+            item_list_for_history = [(item['Nama'], item['Kuantitas']) for item in st.session_state.cart]
+            add_to_history(item_list_for_history, total_bersih, diskon_amount)
+            
+            # Tampilkan pesan sukses dan struk sederhana
+            st.balloons()
+            st.success(f"Transaksi Selesai! Kembalian Rp {kembalian:,.0f}")
+            
+            # Reset state setelah transaksi selesai
+            st.session_state.cart = []
+            st.session_state.diskon_persen = 0
+            st.session_state.quantities = {k: 0 for k in PRODUCTS.keys()}
+            
+            # Force rerun agar input kuantitas direset
+            st.experimental_rerun() 
+            
+    elif not st.session_state.cart:
+        st.warning("Tambahkan item ke keranjang untuk menyelesaikan transaksi.")
+    elif pembayaran < total_bersih:
+        st.warning("Jumlah pembayaran kurang dari total tagihan.")
+        
+
+# --- Bagian 3: Riwayat Transaksi (Simulasi Database) ---
+st.markdown("---")
+st.header("3. Riwayat Penjualan Harian")
+
+if not st.session_state.history.empty:
+    st.dataframe(st.session_state.history, use_container_width=True)
+else:
+    st.info("Belum ada transaksi yang tercatat hari ini.")
+
+st.markdown("---")
+st.caption("Dibuat dengan Python Streamlit untuk solusi POS sederhana.")
