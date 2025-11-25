@@ -168,4 +168,36 @@ with col2:
         ax.axhline(0, color='gray', linewidth=0.5)
         ax.axvline(0, color='gray', linewidth=0.5)
         ax.grid(True, linestyle='--', alpha=0.6)
-        ax.set_xlabel("S
+        ax.set_xlabel("Sumbu X")
+        ax.set_ylabel("Sumbu Y")
+        ax.set_title(f"Visualisasi {transform_type}")
+        
+        # Atur batas sumbu
+        ax.set_xlim(x_min, x_max)
+        ax.set_ylim(y_min, y_max)
+        ax.set_aspect('equal', adjustable='box') # Penting agar skala X dan Y sama
+        
+        ax.legend()
+        st.pyplot(fig)
+        
+        # Tampilkan Hasil Perhitungan dalam bentuk tabel
+        st.subheader("Tabel Koordinat")
+        data = {
+            'Titik Awal ($P$)': [f'({X_orig[i]:.2f}, {Y_orig[i]:.2f})' for i in range(len(X_orig)-1)],
+            'Titik Hasil ($P^\prime$)': [f'({X_trans[i]:.2f}, {Y_trans[i]:.2f})' for i in range(len(X_trans)-1)]
+        }
+        st.table(data)
+        
+        # Penjelasan Konsep Singkat
+        st.subheader("💡 Konsep Dasar")
+        if transform_type == "Translasi":
+            st.markdown("Translasi adalah pergeseran setiap titik objek atau bentuk dengan jarak dan arah yang sama. Ditentukan oleh **Vektor Translasi** $(t_x, t_y)$.")
+        elif transform_type == "Rotasi":
+            st.markdown("Rotasi adalah perputaran objek pada titik pusat tertentu dengan sudut tertentu. Rotasi mempertahankan bentuk dan ukuran objek.")
+        elif transform_type == "Refleksi":
+            st.markdown("Refleksi adalah pencerminan objek. Setiap titik objek berjarak sama dari **Garis Cermin**.")
+        elif transform_type == "Dilatasi":
+            st.markdown("Dilatasi adalah perubahan ukuran objek (memperbesar atau memperkecil) tanpa mengubah bentuknya. Ditentukan oleh **Faktor Skala** ($k$) dan **Pusat Dilatasi**.")
+        
+    else:
+         st.warning("Mohon perbaiki format koordinat di kolom kiri untuk menampilkan visualisasi.")
